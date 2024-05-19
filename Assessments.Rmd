@@ -1,0 +1,890 @@
+---
+title: "Assessments"
+author: '2023148121'
+date: "2024-05-18"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Tutorial 1
+
+Q1. Get a dataset from any online resource. You can find a dataset of your domain (e.g. if you
+are studying economics, you find an economics data). You are free to use google or any other
+search engine. Analyse the dataset using the R tools we have learned so far and your statistical
+knowledge and prepare a MS-Word report not more than 1 page long.
+
+```{r}
+# Load the dataset
+data("mtcars")
+
+# Calculate basic statistics for mpg
+mean_mpg <- mean(mtcars$mpg)
+median_mpg <- median(mtcars$mpg)
+sd_mpg <- sd(mtcars$mpg)
+iqr_mpg <- IQR(mtcars$mpg)
+
+# Print the statistics
+cat("Mean of mpg:", mean_mpg, "\n")
+
+## Mean of mpg: 20.09062
+cat("Median of mpg:", median_mpg, "\n")
+
+## Median of mpg: 19.2
+cat("Standard deviation of mpg:", sd_mpg, "\n")
+
+## Standard deviation of mpg: 6.026948
+cat("Interquartile Range of mpg:", iqr_mpg, "\n")
+
+## Interquartile Range of mpg: 7.375
+Interpretation of Basic Statistics
+Mean of mpg: Reflects the average fuel efficiency across all cars in the dataset. Median of
+mpg: Represents the middle value of fuel efficiency, highlighting that half the cars have
+better and half have worse fuel efficiency than this value. Standard deviation of mpg:
+Indicates how spread out the fuel efficiency values are from the average. A higher value
+suggests greater variability. Interquartile Range of mpg: Shows the range within which the
+middle 50% of fuel efficiency values lie, providing a sense of the variability in the central
+portion of the dataset.
+Next, we shall create a contigency table for two categorical variables (e.g., using cyl for the
+number of cylinders and gear for the number of gears).
+
+# Create a contingency table for the number of cylinders and gears
+contingency_table <- xtabs(~ cyl + gear, data = mtcars)
+
+# Print the contingency table
+print(contingency_table)
+
+## gear
+## cyl 3 4 5
+## 4 1 8 2
+## 6 2 4 1
+## 8 12 0 2
+
+This contingency table will show the counts of cars in the dataset that fall into each
+combination of cylinders and gears, providing insight into how these two features are
+distributed among the cars. For example, it can show us how many cars have 4 cylinders
+and 4 gears, 4 cylinders and 5 gears, etc.
+
+```
+Tutorial 2
+
+Q1. Assume the dataset is a vector of daily temperatures in Celsius for a month, provided
+in the following format:
+Temp: 13.01, 11.05, 35.38, 28.61, 0.64, 18.31, 2.65, 0.98, 23.31, 17.76, 33.92, 4.42, 6.81, 12.76, 22.24,
+78.08, 16.89, 13.51, 32.80, 5.56, 20.93, 0.86, 17.25, 36.23, 11.55, 25.54, 1.50, 4.77, 6.89, 21.62.
+Calculate the Average Temperature:
+Use a while() loop to add all the temperatures in the dataset. Do not use the mean() or
+sum() function. Then find the average temperature for the month.
+Count Days Above Average Temperature:
+Using a for() loop, count the number of days where the temperature was above the
+calculated average.
+Find the Maximum Temperature Swing:
+Using a repeat() loop, calculate the temperature swing (absolute difference) between
+each day and the previous day. Keep track of the maximum swing observed throughout
+the month. This means when the maximum swing on any day overtakes the previous
+maximum swing, we store the swing value. Else, we continue with the previous maximum
+swing.
+```{r}
+# Sample dataset of daily temperatures for a month
+temperatures <- c(13.01, 11.05, 35.38, 28.61, 0.64, 18.31, 2.65, 0.98,
+23.31, 17.76, 33.92, 4.42, 6.81, 12.76, 22.24, 78.08, 16.89, 13.51, 32.80,
+5.56, 20.93, 0.86, 17.25, 36.23, 11.55, 25.54, 1.50, 4.77, 6.89, 21.62)
+# Calculate the average temperature
+totalTemperature <- 0
+i = 1
+while(i <= length(temperatures)){
+ totalTemperature = totalTemperature+temperatures[i]
+ i = i+1
+}
+averageTemperature <- totalTemperature / length(temperatures)
+# To check if the while() loop is giving the correct answer.
+mean(temperatures)
+## [1] 17.52767
+# Count the number of days above average temperature
+daysAboveAverage <- 0
+for (temp in temperatures) {
+ if (temp > averageTemperature) {
+ daysAboveAverage <- daysAboveAverage + 1
+ }
+}
+# Keep track of the maximum temperature swing between any two consecutive
+days
+# This means when the maximum swing on any day overtakes the previous maximum
+swing, we store the swing value. Else, we continue with the previous maximum
+swing.
+i = 1
+maxSwing <- 0
+swing <- 0
+repeat{
+ swing <- abs(temperatures[i+1]-temperatures[i])
+ if(i == 1 && swing>maxSwing[i]){
+ maxSwing[i] <- swing
+ }else{
+ if(swing>maxSwing[i-1]){
+ maxSwing[i] <- swing
+ }else{
+ maxSwing[i] <- maxSwing[i-1]
+ }
+ }
+ i <- i+1
+ if(i== length(temperatures)){
+ break;
+ }
+}
+# Print the results
+cat("Average temperature for the month:", averageTemperature, "\n")
+## Average temperature for the month: 17.52767
+cat("Number of days above average temperature:", daysAboveAverage, "\n")
+## Number of days above average temperature: 13
+cat("Maximum temperature swing between any two consecutive days:", maxSwing,
+"\n")
+## Maximum temperature swing between any two consecutive days: 1.96 24.33
+24.33 27.97 27.97 27.97 27.97 27.97 27.97 27.97 29.5 29.5 29.5 29.5 55.84
+61.19 61.19 61.19 61.19 61.19 61.19 61.19 61.19 61.19 61.19 61.19 61.19 61.19
+61.19
+```
+Tutorial 3
+```{r}
+Q1. Consider the ‘airquality’ dataset. This dataset contains daily readings of the air quality
+measures from May 1, 1973 to September 30, 1973 in New York. Perform a statistical analysis
+of the data and write a 5-page (at most) report. Your report should contain a brief description
+of the dataset, basic statistical analysis and exploratory analysis with the help of statistical plots.
+
+???????????????????????????????????????????????????????????????/
+
+```
+Tutorial 4
+```{r}
+Q1.Write a while loop that prints out the Fibonacci sequence up to
+the 10th term. The Fibonacci sequence is a series of numbers in which
+each number is the sum of the two preceding numbers. The sequence
+starts with 0 and 1, and the next number is the sum of the previous
+two numbers. The sequence goes as follows: 0, 1, 1, 2, 3, 5, 8, 13, 21,
+34, 55, 89, 144, 233, 377, and so on.
+Let us consider the first 20 Fibonacci numbers.
+n <- 20
+a <- 0
+b <- 1
+i <- 1
+while (i <= n) {
+ print(a)
+ # we store the sum in the variable s
+ s <- b + a
+ a <- b
+ b <- s
+ i <- i + 1
+}
+## [1] 0
+## [1] 1
+## [1] 1
+## [1] 2
+## [1] 3
+## [1] 5
+## [1] 8
+## [1] 13
+## [1] 21
+## [1] 34
+## [1] 55
+## [1] 89
+## [1] 144
+## [1] 233
+## [1] 377
+## [1] 610
+## [1] 987
+## [1] 1597
+## [1] 2584
+## [1] 4181
+Q2.Write a while loop that calculates the sum of the first 50 odd
+numbers.
+sum <- 0
+i <- 1
+while (i <= 100) {
+ if (i %% 2 != 0) {
+ sum <- sum + i
+ }
+ i <- i + 1
+}
+print(sum)
+## [1] 2500
+Q3.Write a for loop that creates a vector of the first 20 multiples of 3.
+multiples <- numeric(20)
+for (i in 1:20) {
+ multiples[i] <- i * 3
+}
+print(multiples)
+## [1] 3 6 9 12 15 18 21 24 27 30 33 36 39 42 45 48 51 54 57 60
+Q4. Write a while loop that checks if a given number is prime.
+There are many ways to check if a number is prime. Here we will use the Wilson’s theorem
+that says a number 𝑝 > 1 is prime if and only if (𝑝 − 1)! divided by 𝑝 has the remainder −1
+or (𝑝 − 1).
+is_prime <- function(n) {
+ if (n <= 1) {
+ return(FALSE)
+ }
+
+ if (n == 2) {
+ return(TRUE)
+ }
+
+ if (n %% 2 == 0) {
+ return(FALSE)
+ }
+   if(n %% 2 == 1){
+ fact <- 1
+ for (i in 2:(n-1)) {
+ fact <- fact*i
+ }
+ if(fact %% n == (n-1) || fact %% n == (-1)){
+ return(TRUE)
+ }else{return(FALSE)}
+ }
+}
+is_prime(17)
+## [1] TRUE
+Q5. Write a for loop that creates a matrix of size 5x5, with each
+element equal to its row number times its column number. Check if it
+is a singular matrix by the determinant of the matrix.
+mat <- matrix(nrow=5, ncol=5)
+for (i in 1:5) {
+ for (j in 1:5) {
+ mat[i,j] <- i * j
+ }
+}
+print(mat)
+## [,1] [,2] [,3] [,4] [,5]
+## [1,] 1 2 3 4 5
+## [2,] 2 4 6 8 10
+## [3,] 3 6 9 12 15
+## [4,] 4 8 12 16 20
+## [5,] 5 10 15 20 25
+det(mat)
+## [1] 0
+The determinant is 0. So the matrix is a singular matrix
+```
+Tutorial 5
+```{r}
+1. Write a function calculate_tip() that calculates the tip amount based on a bill
+amount and a tip percentage. The function should take two arguments:
+bill_amount (a numeric value) and tip_percent (a numeric value between 0 and
+100). The function should return the tip amount as a numeric value.
+calculate_tip <- function(bill_amount, tip_percent)
+{ tip <- bill_amount * tip_percent / 100
+return(tip)
+}
+2. Write a function find_missing_numbers() that takes a vector of consecutive
+integers (in any order) and returns a vector of the missing numbers. For
+example, if the input vector is c(1, 4, 3, 6, 7), the function should return c(2, 5).
+find_missing_numbers <- function(nums) {
+ complete_seq <- seq(min(nums), max(nums))
+ missing_nums <- setdiff(complete_seq, nums)
+ return(missing_nums)
+}
+3. Consider the ‘Smarket’ (S&P Stock Market Data) from the package ‘ISLR’. In
+this dataset, raw values of the S&P 500 were obtained from Yahoo Finance and
+then converted to percentages and lagged. The lag values in the dataset indicate
+the % return for a few days previous. The variable volume is the volume of
+shared traded everyday.
+Use the packages ‘tidyverse’, ‘e1071’, ‘caret’, ‘ISLR’, ‘hrbrthemes’. Set a seed
+value for reproducibility of your analysis of this stock market data. Once the
+dataset is called, remove the very first and the last column. Use this new data
+for the analysis specified below.
+(ii) Create a random partition of the dataset with 70:30 ratio for the training
+data and the test data.
+(ii) Use the variable ‘Today’ (which is the % return for today) as the target (or
+dependent) variable. Use all other variables as predictors (or independent
+variables). Fit a SVM model.
+(iii) Then use this model and the test data to predict the target variable values.
+(iv) Repeat the steps (i) - (iii) for a new training and test data created by
+considering 50:50 random subsets of the full dataset.
+(v) For these two partitions, calculate the RMSE, Rsquared and MAE values.
+Which partition ratio provides better SVM fit for the dataset?
+(vi) Next, create another partition with 60:30 random subsets for the training
+and the test data, respectively. Fit another SVM model with ‘Today’ as the
+target variable and ‘Lag1’ and ‘Lag5’ as the predictors. Create a grid of Lag1 and
+Lag5 values between the corresponding minimum and maximum. Using the new
+model and the grid data, predict the % return for today. Then create a contour
+plot with Lag1 and Lag5 on the X and Y axis and ‘Today’ on the Z axis.
+(vii) Then include the Lag1 and Lag5 values from the training data and the
+support vectors in the same contour plot.
+library(tidyverse)
+## ── Attaching core tidyverse packages ──────────────────────── tidyverse
+2.0.0 ──
+## ✔ dplyr 1.1.2 ✔ readr 2.1.4
+## ✔ forcats 1.0.0 ✔ stringr 1.5.0
+## ✔ ggplot2 3.4.2 ✔ tibble 3.2.1
+## ✔ lubridate 1.9.2 ✔ tidyr 1.3.0
+## ✔ purrr 1.0.1
+## ── Conflicts ──────────────────────────────────────────
+tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag() masks stats::lag()
+## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all
+conflicts to become errors
+library(e1071)
+library(caret)
+## Loading required package: lattice
+##
+## Attaching package: 'caret'
+##
+## The following object is masked from 'package:purrr':
+##
+## lift
+library(ISLR)
+## Warning: package 'ISLR' was built under R version 4.3.2
+library(hrbrthemes)
+## Warning: package 'hrbrthemes' was built under R version 4.3.3
+set.seed(123) # for reproducibility
+# Call the dataset
+data <- Smarket
+# Remove the first and the last column
+data <- data[,-c(1,9)]
+# Fitting a SVM model with training data taken as 70% random subset of the
+full dataset
+partition_index <- createDataPartition(data$Today, p = 0.7, list = FALSE)
+train_data <- data[partition_index,]
+test_data <- data[-partition_index,]
+model1 <- svm(Today~., data = train_data)
+stock_predict <- predict(model1, test_data)
+result1 <- postResample(stock_predict, test_data$Today)
+# Fitting a SVM model with training data taken as 50% random subset of the
+full dataset
+partition_index <- createDataPartition(data$Today, p = 0.5, list = FALSE)
+train_data <- data[partition_index,]
+test_data <- data[-partition_index,]
+model2 <- svm(Today~., data = train_data)
+stock_predict <- predict(model2, test_data)
+result2 <- postResample(stock_predict, test_data$Today)
+result1
+## RMSE Rsquared MAE
+## 1.221993342 0.009501675 0.887532569
+result2
+## RMSE Rsquared MAE
+## 1.15038714 0.00489326 0.84103498
+From the RMSE value, Rsquared value, and the MAE value, it can be said that The SVM
+model with 50% random subset taken as the training data has slightly better fit.
+set.seed(123)
+partition_index <- createDataPartition(data$Today, p = 0.6, list = FALSE)
+train_data <- data[partition_index,]
+test_data <- data[-partition_index,]
+model3 <- svm(Today~ Lag1+Lag5, data = train_data)
+Lag1_seq <- seq(min(train_data$Lag1),max(train_data$Lag1), length.out = 100)
+Lag2_seq <- seq(min(train_data$Lag2),max(train_data$Lag2), length.out = 100)
+grid <- expand.grid(Lag1 = Lag1_seq, Lag5 = Lag2_seq)
+grid$Today <- predict(model3, grid)
+svr_index <- model3$index
+support_vectors <- train_data[svr_index,]
+ggplot(data = grid, aes(x = Lag1, y = Lag5, color = Today))+
+ geom_tile()+
+ geom_contour(aes(z=Today), color = "white")+
+ geom_point(data = train_data, aes(x=Lag1, y=Lag5), color = "yellow", size =
+5)+
+ geom_point(data = support_vectors, aes(x=Lag1, y=Lag5), color="red", shape
+= 8, size = 5)+
+ labs(x = "% return for previous day", y = "% return for 5 days previous",
+title = "Contour plot for the % return for today")
+Q1. Use the dataset ‘Data_Tutorial6.csv’ from the ‘Extra resource’ section of the
+Blackboard. Scale the variables ‘income’, ‘age’, and ‘balance’ from the dataset.
+(i) Create two clusters using the scaled data and create a cluster plot.
+(ii) Use the full dataset to partition into training data and test data with 70:30
+ratio. Then use the variables ‘age’ and ‘income’ as predictors and
+‘loan_approved’ as the target variable to fit a SVM model. Use a polynomial
+kernel.
+(iii) Then create a SVM plot.
+Useful packages: tidyverse, lattice, caret, e1071, cluster
+library(lattice)
+library(caret)
+library(tidyverse)
+library(e1071)
+library(cluster)
+bank_data <- read.csv("C:\\Users\\ChakrabortyN\\OneDrive - University of the
+Free
+State\\Documents\\Admin_documents\\STSM2634_new_documents\\2024\\Datasets\\Da
+ta_Tutorial6.csv", header =T)
+scaled_bank_data <- as.data.frame(scale(bank_data[,c(1:3)]))
+scaled_bank_data$loan_approved <- bank_data$loan_approved
+bank_clusters <- kmeans(scaled_bank_data, centers = 2)
+# Plot the clusters
+clusplot(scaled_bank_data, bank_clusters$cluster, color=TRUE, shade=TRUE,
+ labels=2, lines=0)
+index <- createDataPartition(bank_data$loan_approved, p = 0.7, times = 1,
+list = F)
+data_train <- bank_data[index,]
+data_test <- bank_data[-index,]
+df <- data.frame(data_train[,c("age","income","loan_approved")])
+svm_model <- svm(loan_approved ~ income+age, data = df, kernel =
+'polynomial')
+grid <- expand.grid(income = seq(min(df$income), max(df$income),
+ length.out = 100),
+ age = seq(min(df$age), max(df$age), length.out = 100))
+grid$loan_approved <- predict(svm_model, newdata = grid)
+ggplot(df, aes(income, age))+
+ geom_tile(data = grid, aes(fill = loan_approved), alpha = 0.3)+
+ geom_point(aes(fill = loan_approved))
+df2 <- data.frame(data_test[,c("age","income","loan_approved")])
+predict_loan <- predict(svm_model, df2)
+postResample(predict_loan, df2$loan_approved)
+## RMSE Rsquared MAE
+## 0.5268635996 0.0001110354 0.3213945195
+```
+Tutorial 6
+```{r}
+Q1. Use the dataset ‘Data_Tutorial6.csv’ from the ‘Extra resource’ section of the
+Blackboard. Scale the variables ‘income’, ‘age’, and ‘balance’ from the dataset.
+(i) Create two clusters using the scaled data and create a cluster plot.
+(ii) Use the full dataset to partition into training data and test data with 70:30
+ratio. Then use the variables ‘age’ and ‘income’ as predictors and
+‘loan_approved’ as the target variable to fit a SVM model. Use a polynomial
+kernel.
+(iii) Then create a SVM plot.
+Useful packages: tidyverse, lattice, caret, e1071, cluster
+library(lattice)
+library(caret)
+library(tidyverse)
+library(e1071)
+library(cluster)
+bank_data <- read.csv("C:\\Users\\ChakrabortyN\\OneDrive - University of the
+Free
+State\\Documents\\Admin_documents\\STSM2634_new_documents\\2024\\Datasets\\Da
+ta_Tutorial6.csv", header =T)
+scaled_bank_data <- as.data.frame(scale(bank_data[,c(1:3)]))
+scaled_bank_data$loan_approved <- bank_data$loan_approved
+bank_clusters <- kmeans(scaled_bank_data, centers = 2)
+# Plot the clusters
+clusplot(scaled_bank_data, bank_clusters$cluster, color=TRUE, shade=TRUE,
+ labels=2, lines=0)
+index <- createDataPartition(bank_data$loan_approved, p = 0.7, times = 1,
+list = F)
+data_train <- bank_data[index,]
+data_test <- bank_data[-index,]
+df <- data.frame(data_train[,c("age","income","loan_approved")])
+svm_model <- svm(loan_approved ~ income+age, data = df, kernel =
+'polynomial')
+grid <- expand.grid(income = seq(min(df$income), max(df$income),
+ length.out = 100),
+ age = seq(min(df$age), max(df$age), length.out = 100))
+grid$loan_approved <- predict(svm_model, newdata = grid)
+ggplot(df, aes(income, age))+
+ geom_tile(data = grid, aes(fill = loan_approved), alpha = 0.3)+
+ geom_point(aes(fill = loan_approved))
+df2 <- data.frame(data_test[,c("age","income","loan_approved")])
+predict_loan <- predict(svm_model, df2)
+postResample(predict_loan, df2$loan_approved)
+## RMSE Rsquared MAE
+## 0.5268635996 0.0001110354 0.3213945195
+```
+Tutorial 7
+```{r}
+Q1. Consider the banking data uploaded in Blackboard. Use the dataset to find how the
+gender and education (independent variables) influence the multivariate response
+variables, which are age, income, and loan amount. Use the ‘car’ package for this MANOVA
+analysis.
+Ans.
+Store the dataset into your working directory. Find the working directory by getwd()
+function is you are not sure about the location of it.
+# Load required libraries
+library(car)
+## Loading required package: carData
+banking_data = read.csv("banking_data.csv",header = T)
+# Perform MANOVA analysis
+manova_result <- manova(cbind(Age, Income, LoanAmount) ~ Gender + Education,
+data = banking_data)
+# Print the results
+summary(manova_result)
+## Df Pillai approx F num Df den Df Pr(>F)
+## Gender 1 0.027406 0.89233 3 95 0.4481
+## Education 1 0.034598 1.13485 3 95 0.3390
+## Residuals 97
+The p-values associated with the independent variables (gender and education) in the
+MANOVA analysis are not significant, it indicates that there is no statistically significant
+evidence to conclude that gender or education has a significant multivariate effect on the
+combined dependent variables (age, income, and loan amount).
+Q2. Let us consider the biotech_data. It contains variables such as SampleID, Gene1, Gene2,
+Gene3, Treatment, and Outcome. The Gene1, Gene2, and Gene3 variables represent gene
+expression levels, while Treatment and Outcome are factors representing different
+treatment groups and outcomes, respectively. Find out if the treatment and outcome is
+jointly affecting the gene expression levels. Perform a MANOVA analysis accordingly.
+# Load required libraries
+library(car)
+biotech_data = read.csv("biotech_data.csv")
+# Perform MANOVA analysis
+manova_result <- manova(cbind(Gene1, Gene2, Gene3) ~ Treatment * Outcome,
+data = biotech_data)
+# Print the results
+summary(manova_result)
+## Df Pillai approx F num Df den Df Pr(>F)
+## Treatment 1 0.041851 1.3686 3 94 0.257192
+## Outcome 1 0.053827 1.7825 3 94 0.155812
+## Treatment:Outcome 1 0.137079 4.9774 3 94 0.003001 **
+## Residuals 96
+## ---
+## Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+In the above example the p-values for treatment and outcome individually are not
+significant, but the p-value for the joint effect of treatment and outcome is significant, it
+indicates that while there may not be a significant individual effect of treatment or outcome
+on the gene expression levels, there is evidence of a significant combined effect when
+considering both variables together.
+Q3. Consider another banking data uploaded in Blackboard. Use the dataset to find how the
+marital status and education (independent variables) influence the multivariate response
+variables, which are age, income, and account balance. Use the ‘car’ package for this
+MANOVA analysis.
+# Load required libraries
+library(car)
+library(readr)
+banking_data2 = read_csv("banking_data2.csv")
+## New names:
+## Rows: 100 Columns: 7
+## ── Column specification
+## ──────────────────────────────────────────────────────── Delimiter: ","
+chr
+## (2): Education, MaritalStatus dbl (5): ...1, CustomerID, Age, Income,
+## AccountBalance
+## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+## Specify the column types or set `show_col_types = FALSE` to quiet this
+message.
+## • `` -> `...1`
+# Perform MANOVA analysis
+manova_result <- manova(cbind(Age, Income, AccountBalance) ~ Education +
+MaritalStatus, data = banking_data2)
+# Print the results
+summary(manova_result)
+## Df Pillai approx F num Df den Df Pr(>F)
+## Education 2 0.159087 2.70775 6 188 0.01518 *
+## MaritalStatus 2 0.030615 0.48709 6 188 0.81749
+## Residuals 95
+## ---
+## Signif. codes: 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+The p-values associated with the independent variable Education in the MANOVA analysis
+is significant, it indicates that there is statistically significant evidence to conclude that
+education has a significant effect on the combined dependent variables (age, income, and
+account balance).
+```
+Assignment 1
+
+```{r}
+Q1. (i) Draw a random sample of real numbers of size 1000, with replacement, from
+the interval (1, 10) (i.e., excluding the endpoints). The population size (the set from
+where you draw the sample) should be 449. Hence, choose the range accordingly.
+Calculate the sample mean. You do not have to print all the random samples. Store
+the sample mean in a variable, say, x1. Then again draw another set of 1000 random
+samples from the same set, with replacement, calculate the sample mean, and store
+the sample mean in a different variable, say, x2.
+Repeat the process of drawing random samples for 5 times. So, you should have 5
+sample mean values stored in variables x1, x2, x3, x4, x5. [2×5 = 10]
+(ii) This process of resampling with replacement is the fundamental idea of what we
+call Bootstrapping. Now calculate the grand mean and the standard deviation of the
+sample means.
+Ans.
+# Step 1: Define the population
+set.seed(42) # For reproducibility
+population <- seq(1.01, 9.99, length.out = 449) # Adjusted to ensure the
+population size is 449 and within (1, 10)
+# Step 2: Draw samples and calculate means
+sample_means <- numeric(5) # Initialize a vector to store sample means
+for (i in 1:5) {
+ samples <- sample(population, size = 1000, replace = TRUE) # Draw 1000
+random samples
+ sample_means[i] <- mean(samples) # Calculate and store the sample mean
+}
+# Naming the variables for clarity
+x1 <- sample_means[1]
+x2 <- sample_means[2]
+x3 <- sample_means[3]
+x4 <- sample_means[4]
+x5 <- sample_means[5]
+# Step 3: Calculate the grand mean and standard deviation of the sample means
+grand_mean <- mean(sample_means)
+std_deviation <- sd(sample_means)
+# Print the grand mean and standard deviation
+print(paste("Grand Mean:", grand_mean))
+## [1] "Grand Mean: 5.5078855625"
+print(paste("Standard Deviation of Sample Means:", std_deviation))
+## [1] "Standard Deviation of Sample Means: 0.0726241623774469"
+Q2. (i) Draw a random sample of integers of size 10 000, with replacement, from the
+interval [1, 10] (i.e., including the endpoints). You do not have to print all the random
+samples. Calculate the sample mean. Store the sample mean in a variable, say, y1.
+Then again draw another set of 10 000 random samples from the same set, with
+replacement, calculate the sample mean, and store the sample mean value in a
+different variable, say, y2.
+Repeat the process of drawing random samples for 5 times. So, you should have 5
+sample mean values stored in variables y1, y2, y3, y4, y5. [2×5 = 10]
+(ii) Now calculate the grand mean and the standard deviation of the sample means. Is
+the standard deviation smaller than that in Q1? Explain why.
+Ans.
+Draw random samples and calculate sample means
+set.seed(42) # Ensure reproducibility
+# Initialize a vector to store the sample means
+sample_means_y <- numeric(5)
+for (i in 1:5) {
+ samples <- sample(1:10, size = 10000, replace = TRUE) # Draw 10,000 random
+samples
+ sample_means_y[i] <- mean(samples) # Calculate and store the sample mean
+}
+# Store the sample means in separate variables for clarity
+y1 <- sample_means_y[1]
+y2 <- sample_means_y[2]
+y3 <- sample_means_y[3]
+y4 <- sample_means_y[4]
+y5 <- sample_means_y[5]
+Calculate the grand mean and standard deviation
+# Calculate the grand mean of the sample means
+grand_mean_y <- mean(sample_means_y)
+# Calculate the standard deviation of the sample means
+std_deviation_y <- sd(sample_means_y)
+# Print the results
+print(paste("Grand Mean:", grand_mean_y))
+## [1] "Grand Mean: 5.49376"
+print(paste("Standard Deviation of Sample Means:", std_deviation_y))
+## [1] "Standard Deviation of Sample Means: 0.025632654954179"
+Explanation:
+The larger sample size (10,000) in Q2 compared to Q1 (1,000) generally leads to sample
+means that are closer to the population mean, thereby reducing the standard deviation of
+the sample means
+Q3. (i) Create three vectors X, Y, Z with all negative integers (any value you like) and
+each vector has 3 elements. [6]
+(ii) Combine the three vectors to become a 3×3 matrix A where each column
+represents a vector. [3]
+(iii) Then obtain the transpose of the matrix A, denoted by A’, and multiply it with the
+original matrix A to obtain the product A’A. Calculate the trace and the determinant of
+the product A’A. Is it possible to have a negative trace? Explain your answer. [6]
+Ans.
+Step 1: Creating vectors
+X <- c(-1, -2, -3)
+Y <- c(-4, -5, -6)
+Z <- c(-7, -8, -9)
+Step 2: Combining Vectors into a Matrix
+A <- cbind(X, Y, Z) # Combine vectors into a matrix
+Step 3: Operations on Matrix A
+A_transpose <- t(A) # Transpose of A
+product <- A_transpose %*% A # Matrix multiplication
+Step 4: Calculate the Trace and the Determinant of the Product 𝑨
+′𝑨
+trace_A_prime_A <- sum(diag(product)) # Trace of A'A
+determinant_A_prime_A <- det(product) # Determinant of A'A
+The trace of a matrix is the sum of its diagonal elements. Since 𝐴
+′𝐴 results in a matrix with
+positive diagonal elements (because squaring any real number, whether positive or
+negative, results in a non-negative number, and the diagonal elements of 𝐴
+′𝐴 are sums of
+squares of elements of 𝐴, the trace of 𝐴
+′𝐴 cannot be negative.
+Q4. Create the following matrix with suitable R functions. Manual entries will not be
+accepted.
+[,1] [,2] [,3]
+[1,] 1 5 2017
+[2,] 3 4 2017
+[3,] 5 3 2017
+[4,] 7 2 2017
+[5,] 9 1 2017
+Ans.
+# Generating the sequences
+first_column <- seq(1, 9, by = 2)
+second_column <- seq(5, 1, by = -1)
+third_column <- rep(2017, 5) # Repeat 2017 five times
+# Combining the columns to form the matrix
+matrix <- cbind(first_column, second_column, third_column)
+# Printing the matrix
+print(matrix)
+## first_column second_column third_column
+## [1,] 1 5 2017
+## [2,] 3 4 2017
+## [3,] 5 3 2017
+## [4,] 7 2 2017
+## [5,] 9 1 2017
+````
+Assignment 2
+```{r}
+Q1. Suppose a manufacturing plant produces 3 different products,
+and it has limited resources available for production. It has three
+different production units. Let 𝑋1, 𝑋2,𝑋3 be the number of machines
+to run for each product that are produced. The weekly cost of running
+these machines (in R10000) in three different units can be framed as a
+system of linear equations:
+2X1 − X2 + 3X3 = 4
+3𝑋1 + 2𝑋2 − 5𝑋3 = 5
+𝑋1 + 4𝑋2 + 2𝑋3 = 3
+#Solve these equations with the help of R functions to find the number of machines to run
+for each product.
+A <- matrix(c(2, -1, 3, 3, 2, -5, 1, 4, 2), nrow = 3, byrow = TRUE)
+B <- c(4, 5, 3)
+X <- solve(A, B)
+X
+## [1] 1.8314607 0.2022472 0.1797753
+After solving the system of linear equations, we find that the number of machines to run for
+each product are approximately
+Product 1: 1.83
+Product 2: 0.20
+Product 3: 0.18
+Q2. Draw random samples of size 1000, 100 000, 50 00 000,
+respectively, from uniform(0,1) distribution. Save them into three
+different variables, say, x1, x2, x3. You do not need to print the
+random samples. Then calculate the mean of x1, x2, x3. Which mean
+is the closest to 0.5. Explain your findings.
+# Set seed for reproducibility
+set.seed(123)
+# Draw random samples from a uniform(0,1) distribution
+x1 <- runif(1000)
+x2 <- runif(100000)
+x3 <- runif(50000000)
+# Calculate the mean of each sample
+mean_x1 <- mean(x1)
+mean_x2 <- mean(x2)
+mean_x3 <- mean(x3)
+# Print the means
+print(mean_x1)
+## [1] 0.4972778
+print(mean_x2)
+## [1] 0.4993165
+print(mean_x3)
+## [1] 0.4999909
+# Determine which mean is closest to 0.5
+means <- c(mean_x1, mean_x2, mean_x3)
+names <- c("x1", "x2", "x3")
+names[which.min(abs(means - 0.5))]
+## [1] "x3"
+as the sample size increases, the sample mean should get closer to the expected value
+(mean) of the population. In this case, the population mean of a uniform(0,1) distribution is
+0.5. Therefore, we expect larger sample sizes to produce means closer to 0.5, as observed.
+Q3. Get a dataset from a package in R. Analyse the data and prepare a
+report.
+(The data analysis report provided here serves merely as a template and should not be
+taken as a strict guideline. Feel free to create your own report based on this example or
+your unique approach to statistical data analysis.)
+Let’s use the mtcars dataset from R’s built-in datasets, a commonly used dataset. The
+mtcars dataset comprises fuel consumption and ten aspects of automobile design and
+performance for 32 automobiles.
+1. Preliminary Data Check and Cleaning
+library(ggplot2)
+library(GGally)
+## Warning: package 'GGally' was built under R version 4.3.1
+## Registered S3 method overwritten by 'GGally':
+## method from
+## +.gg ggplot2
+# Load the dataset
+data("mtcars")
+# Check for missing values
+any(is.na(mtcars))
+## [1] FALSE
+As we find, there is no missing value in the dataset. Now, we can use ggplot2 to create
+boxplots for the mpg (miles per gallon) variable as an example to check for outliers:
+ggplot(mtcars, aes(x = factor(0), y = mpg)) +
+ geom_boxplot() +
+ labs(x = "", y = "Miles/(US) gallon") +
+ theme_bw() +
+ theme(axis.title.x=element_blank(),
+ axis.ticks.x=element_blank(),
+ axis.text.x=element_blank())
+Analyzing correlations:
+# Correlation matrix plot for selected variables
+ggpairs(mtcars[, c("mpg", "wt", "hp", "qsec")])
+The correlation plot shows that there are significant correlations among all the variables
+considered.
+Creating Histograms:
+Histograms can give insights into the distribution of variables.
+# Histogram for mpg
+ggplot(mtcars, aes(x = mpg)) +
+ geom_histogram(binwidth = 2, fill = "blue", color = "black") +
+ labs(title = "Histogram of MPG", x = "Miles/(US) gallon", y = "Frequency")
++
+ theme_bw()
+# Histogram for wt
+ggplot(mtcars, aes(x = wt)) +
+ geom_histogram(binwidth = 0.25, fill = "green", color = "black") +
+ labs(title = "Histogram of Car Weights", x = "Weight (1,000 lbs)", y =
+"Frequency") +
+ theme_bw()
+MPG (Miles Per Gallon): The histogram of mpg shows a distribution of fuel efficiencies
+across the dataset. As the distribution appears right-skewed/positively skewed, it may
+indicate that most cars fall within a particular range of fuel efficiency, with fewer cars
+achieving very high mpg.
+WT (Weight): The histogram for car weights (wt) shows how the weights of cars are
+distributed. An approximately symmetric distribution suggests that most cars in the
+dataset are around 3500 pound (lbs), highlighting the concentration of car designs around
+this specific weight configuration.
+```
+Assignment 3
+```{r}
+1. Description of the dataset
+This data set contains statistics, in arrests per 100,000 residents for assault, murder, and
+rape in each of the 50 US states in 1973. Also given is the percent of the population living in
+urban areas.
+2. Preview of the USArrests dataset
+library(tidyverse)
+data = USArrests
+head(data)
+## Murder Assault UrbanPop Rape
+## Alabama 13.2 236 58 21.2
+## Alaska 10.0 263 48 44.5
+## Arizona 8.1 294 80 31.0
+## Arkansas 8.8 190 50 19.5
+## California 9.0 276 91 40.6
+## Colorado 7.9 204 78 38.7
+str(data)
+## 'data.frame': 50 obs. of 4 variables:
+## $ Murder : num 13.2 10 8.1 8.8 9 7.9 3.3 5.9 15.4 17.4 ...
+## $ Assault : int 236 263 294 190 276 204 110 238 335 211 ...
+## $ UrbanPop: int 58 48 80 50 91 78 77 72 80 60 ...
+## $ Rape : num 21.2 44.5 31 19.5 40.6 38.7 11.1 15.8 31.9 25.8 ...
+3. A Histogram of the Murder rate in USArrests dataset
+ggplot(data,aes(x = data$Murder))+geom_histogram(fill = "blue",
+color="white", bins = 20)+labs(x="Murder Rate", y =
+"Frequency")+ggtitle("Histogram of Murder Rates in USArrests Dataset")
+4. A scatterplot of Murder vs. Assault
+ggplot(data, aes(x = data$Murder, y = data$Assault))+geom_point()+
+ labs(x="Murder Rate", y = "Assault Rate")+
+ ggtitle("Scatterplot of Murder and Assault Rates in USArrests Dataset")
+5. A line chart of Rape over Time
+ggplot(data, aes(x = c(1:nrow(data)),y = data$Rape))+geom_line(color =
+"blue")
+6. A correlation between urban population and the rate of rape
+library(GGally)
+## Warning: package 'GGally' was built under R version 4.3.1
+## Registered S3 method overwritten by 'GGally':
+## method from
+## +.gg ggplot2
+data1 = data.frame(data$UrbanPop, data$Rape)
+ggpairs(data1)
+The correlation plot clearly shows a positive correlation between the urban population size
+and the rate of rape. The correlation coefficient is 0.411 and it is significant. The density
+plot shows that the rate of rape has positively skewed distribution. This indicates that the
+rate of rape is mostly concentrated towards the lower values. On the other hand, urban
+population has negatively skewed distribution. This shows that older population of above
+50 is more widespread in all the cities in the dataset.
+```
+Assignment 4
+```{r}
+Q1.
+Dataset: Obtain the Asn4_data.csv file from Blackboard. This dataset consists of 50 rows
+and 500 columns, where each row represents a data string of 500 variables (as indicated by
+the columns). Additionally, a dummy variable classifies each data string into one of five
+types. The id variable serves as the index for each row.
+Objective: Create a single plot featuring multiple line charts, one for each of the 50 rows.
+Use the types of the data strings, as specified by the dummy variable, to color the line
+charts.
+Ans.
+rm(list = ls())
+# Load necessary libraries
+library(tidyr)
+library(ggplot2)
+data_df <- read.csv("Asn4_data.csv", header = T)
+# Melt the dataset to a long format for plotting
+data_long <- gather(data_df, key = "time", value = "value", -dummy_variable,
+-id)
+data_long$time <- as.numeric(as.character(gsub("V", "", data_long$time)))
+# Plot using ggplot with facet_wrap
+# Plot using ggplot
+p <- ggplot(data_long, aes(x = time, y = value, group = id, color =
+dummy_variable)) +
+ geom_line(alpha = 0.7) + # Set alpha for better visualization
+ labs(title = "Multiple Time Series Plot", x = "Time", y = "Value") +
+ scale_color_manual(values = c("Type1" = "darkblue", "Type2" = "#f67e1f",
+"Type3"="#cb181d","Type4"="#238b45", "Type5"="#6a51a3")) + # Color by dummy
+variable
+ theme_classic() +
+ theme(legend.title = element_blank()) # Modify legend
+print(p)
+```
+```
+
+```
+
